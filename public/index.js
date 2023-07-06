@@ -5,9 +5,11 @@ import {
 } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-analytics.js";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
 import {
-  getAuth,
   createUserWithEmailAndPassword,
+  getAuth,
+  GoogleAuthProvider,
   signInWithEmailAndPassword,
+  signInWithPopup,
 } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
 
 const firebaseConfig = {
@@ -22,8 +24,15 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
+
 const analytics = getAnalytics(app);
 const auth = getAuth(app);
+
+const provider = new GoogleAuthProvider();
+provider.addScope("https://www.googleapis.com/auth/contacts.readonly");
+provider.setCustomParameters({
+  login_hint: "user@example.com",
+});
 
 logEvent(analytics, "notification_received");
 
@@ -31,6 +40,8 @@ const form = document.getElementById("form");
 const btnLogin = document.getElementById("btn-signin");
 const btnRegister = document.getElementById("btn-register");
 const txtNotMember = document.getElementById("txt-not-member");
+const titleForm = document.getElementById("title-form");
+const btnGoogle = document.getElementById("btn-google");
 
 form.addEventListener("submit", function (event) {
   event.preventDefault();
@@ -89,14 +100,40 @@ form.addEventListener("submit", function (event) {
   }
 });
 
+btnGoogle.onclick = (e) => {
+  e.preventDefault();
+  signInWithPopup(auth, provider)
+    .then((result) => {
+      // This gives you a Google Access Token. You can use it to access the Google API.
+      const credential = GoogleAuthProvider.credentialFromResult(result);
+      const token = credential.accessToken;
+      // The signed-in user info.
+      const user = result.user;
+      // IdP data available using getAdditionalUserInfo(result)
+      // ...
+    })
+    .catch((error) => {
+      // Handle Errors here.
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      // The email of the user's account used.
+      const email = error.customData.email;
+      // The AuthCredential type that was used.
+      const credential = GoogleAuthProvider.credentialFromError(error);
+      // ...
+    });
+};
+
 btnRegister.onclick = () => {
   if (btnRegister.innerHTML === "Register") {
     btnLogin.innerHTML = "Register";
     txtNotMember.textContent = "Have you registered";
     btnRegister.textContent = "Login";
+    titleForm.textContent = "Register new user";
   } else {
     btnLogin.innerHTML = "Sign in";
     txtNotMember.textContent = "Not a member?";
     btnRegister.textContent = "Register";
+    titleForm.textContent = "Sign in to your account";
   }
 };
