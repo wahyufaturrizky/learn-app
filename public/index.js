@@ -124,7 +124,6 @@ form.addEventListener("submit", function (event) {
 // };
 
 btnRegister.onclick = () => {
-  console.log("sdsd");
   if (btnRegister.innerHTML === "Register") {
     btnLogin.innerHTML = "Register";
     txtNotMember.textContent = "Have you registered";
