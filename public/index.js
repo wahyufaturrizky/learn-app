@@ -133,6 +133,6 @@ btnRegister.onclick = () => {
     btnLogin.innerHTML = "Sign in";
     txtNotMember.textContent = "Not a member?";
     btnRegister.textContent = "Register";
-    titleForm.textContent = "Sign in to your account";
+    titleForm.textContent = "Sign in to Threads";
   }
 };
